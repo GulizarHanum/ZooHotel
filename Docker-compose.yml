@@ -1,0 +1,24 @@
+version: '3.4'
+
+services:
+  postgres:
+    image: 'postgres:14'
+    container_name: 'java-postgres'
+    restart: always
+    environment:
+      POSTGRES_DB: billboard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+    ports:
+      - "5432:5432"
+
+  app:
+    image: gulizar/getting-started:latest
+    container_name: 'java-zoo-hotel'
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/billboard
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1
+    ports:
+      - "8080:8080"

@@ -1,0 +1,44 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    ROOT: INFO
+    org.springframework: INFO
+
+spring:
+  application:
+    name: ZooHotel
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      use-new-id-generator-mappings: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://postgres:5432/billboard
+    username: postgres
+    password: 1
+  liquibase:
+    enabled: true
+    change-log: "classpath:db/changelog/db.changelog-master.yaml"
+
+springdoc:
+  swagger-ui:
+    path: '/swagger-ui'
+    operations-sorter: method
+    doc-expansion: none
+    disable-swagger-default-url: true
+
+jwt:
+  secret: bd8f4490-d74b-4881-9f67-644b427cc5ac
+  access-token:
+    expirationMs: 1800000 # 30 ?????
+  refresh-token:
+    expirationMs: 86400000 # 24 ????
