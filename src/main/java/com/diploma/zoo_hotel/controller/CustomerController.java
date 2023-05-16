@@ -24,8 +24,8 @@ public class CustomerController {
     @PostMapping("/customers")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "Создать профиль")
-    public void createCustomer(@Parameter(description = "Данные профиля") @RequestBody CustomerDto dto) {
-        customerService.createCustomer(dto);
+    public CustomerDto createCustomer(@Parameter(description = "Данные профиля") @RequestBody CustomerDto dto) {
+        return customerService.createCustomer(dto);
     }
 
     @PutMapping("/customers")

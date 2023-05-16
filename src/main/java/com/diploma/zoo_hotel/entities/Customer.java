@@ -24,7 +24,7 @@ public class Customer extends Person {
     @Column(name = "city")
     private City city;
 
-    @OneToMany(mappedBy = "customer", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer", orphanRemoval = true)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<Pet> pets;

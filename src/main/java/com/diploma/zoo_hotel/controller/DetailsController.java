@@ -24,8 +24,8 @@ public class DetailsController {
     @PostMapping("/employee/{employeeId}/details")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "Создать профиль")
-    public void createDetails(@Parameter(description = "Идентификатор Работника") @PathVariable Long employeeId, @Parameter(description = "Доп данные работника") @RequestBody DetailsDto dto) {
-        detailsService.createDetails(employeeId, dto);
+    public DetailsDto createDetails(@Parameter(description = "Идентификатор Работника") @PathVariable Long employeeId, @Parameter(description = "Доп данные работника") @RequestBody DetailsDto dto) {
+        return detailsService.createDetailsDto(employeeId, dto);
     }
 
     @PutMapping("/employee/{employeeId}/details")

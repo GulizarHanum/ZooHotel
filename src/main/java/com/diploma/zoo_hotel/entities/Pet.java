@@ -27,10 +27,6 @@ public class Pet {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "employee_id", nullable = false)
-    private Employee employee;
-
     @Column(name = "name")
     private String name;
 

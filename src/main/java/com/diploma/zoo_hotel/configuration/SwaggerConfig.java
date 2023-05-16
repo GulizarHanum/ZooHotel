@@ -16,7 +16,7 @@ public class SwaggerConfig {
                         .description("Сайт по передержке животных")
                         .contact(new Contact()
                                 .name("Измайлова Гулизар-Ханум Юнус-кызы"))
-                        .version("v1"));
+                        .version("0.1.0"));
     }
 
 }

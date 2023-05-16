@@ -26,23 +26,20 @@ public class OrderService {
     private final EmployeeService employeeService;
     private final ScheduleService scheduleService;
 
-    @Transactional
-    public void createOrder(OrderDto dto) {
+    public OrderDto createOrder(OrderDto dto) {
         Customer customer = customerService.getCustomerById(dto.getCustomerId());
         Employee seller = employeeService.getEmployeeById(dto.getSellerId());
 
         Order order = new Order();
-        order.setId(dto.getId());
         order.setSeller(seller);
         order.setCustomer(customer);
         order.setCost(dto.getCost());
         order.setCreateDateTime(LocalDateTime.now());
         order.setServiceType(ServiceType.fromValue(dto.getServiceType()));
         order.setDescription(dto.getDescription());
-        order.setStartDateTime(order.getStartDateTime());
+        order.setStartDateTime(dto.getStartDateTime());
         order.setStatus(Status.NEW);
-        order.setEndDateTime(order.getEndDateTime());
-        orderRepository.save(order);
+        order.setEndDateTime(dto.getEndDateTime());
 
         scheduleService.createSchedules(dto.getSellerId(),
                 List.of(ScheduleDto.builder()
@@ -50,6 +47,8 @@ public class OrderService {
                 .startDateTime(dto.getStartDateTime())
                 .endDateTime(dto.getEndDateTime())
                 .build()));
+
+        return buildDto(orderRepository.save(order));
     }
 
     public List<OrderDto> getOrdersByCustomer(Long id) {

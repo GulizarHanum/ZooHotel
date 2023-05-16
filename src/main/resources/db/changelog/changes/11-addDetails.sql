@@ -1,12 +1,12 @@
 create table details
 (
     id                 serial,
-    employee_id        bigint  not null,
-    experience         int     not null,
-    is_house           boolean not null,
-    children           integer not null,
-    have_equipment     boolean not null,
-    accept_animals     text,
+    employee_id        bigint not null,
+    experience         int,
+    have_animals       boolean,
+    is_house           boolean,
+    children           integer,
+    have_equipment     boolean,
     have_vet_education boolean,
     primary key (id),
     foreign key (employee_id) references employee (id) on delete cascade
@@ -17,17 +17,15 @@ create table accept_sizes
     details_id  bigint,
     accept_size text,
     foreign key (details_id) references details (id) on delete cascade,
-    primary key (accept_size)
+    primary key (details_id, accept_size)
 );
 
-create table employee_animals
+create table accept_animals
 (
-    employee_animals_id serial not null,
-    details_id          bigint,
-    pet_id              bigint,
+    details_id    bigint,
+    accept_animal text,
     foreign key (details_id) references details (id) on delete cascade,
-    foreign key (pet_id) references pet (id) on delete cascade,
-    primary key (employee_animals_id)
+    primary key (details_id, accept_animal)
 );
 
 alter table employee

@@ -102,7 +102,7 @@ public class CostServiceTypeService {
      * @param costServiceType сущность
      * @return ДТО с данными
      */
-    private static CostServiceTypeDto buildDto(CostServiceType costServiceType) {
+    public static CostServiceTypeDto buildDto(CostServiceType costServiceType) {
         return CostServiceTypeDto.builder()
                 .id(costServiceType.getId())
                 .cost(costServiceType.getCost())

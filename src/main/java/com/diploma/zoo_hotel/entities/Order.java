@@ -11,7 +11,7 @@ import java.util.List;
  * Сущность "Заказ"
  */
 @Entity
-@Table(name = "order")
+@Table(name = "order_report")
 @Getter
 @Setter
 @NoArgsConstructor

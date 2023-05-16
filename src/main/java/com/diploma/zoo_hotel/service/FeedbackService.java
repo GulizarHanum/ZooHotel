@@ -34,7 +34,7 @@ public class FeedbackService {
      *
      * @param dto объект с данными
      */
-    public void createFeedback(FeedbackDto dto) {
+    public FeedbackDto createFeedback(FeedbackDto dto) {
         Customer sender = customerService.getCustomerById(dto.getSenderId());
         Employee recipient = employeeService.getEmployeeById(dto.getRecipientId());
         if (Objects.equals(sender.getId(), recipient.getId())) {
@@ -48,11 +48,11 @@ public class FeedbackService {
         feedback.setText(dto.getText());
         feedback.setSender(sender);
         feedback.setSendDateTime(LocalDateTime.now());
-        feedbackRepository.save(feedback);
 
         Long recipientId = recipient.getId();
         BigDecimal newAvgMark = this.getFeedbackAvgMarkByRecipientId(recipientId);
         employeeService.updateAvgMark(recipientId, newAvgMark);
+        return buildDto(feedbackRepository.save(feedback));
     }
 
     /**

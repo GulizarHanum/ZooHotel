@@ -27,7 +27,7 @@ public class ScheduleService {
      */
     public List<Schedule> createSchedules(Long id, List<ScheduleDto> dtos) {
         List<Schedule> schedules = new ArrayList<>();
-        if (!dtos.isEmpty() && dtos.get(0) != null) {
+        if (!dtos.isEmpty()) {
             Employee employee = employeeService.getEmployeeById(id);
             for (ScheduleDto dto:dtos) {
                 Schedule schedule = new Schedule();
@@ -40,6 +40,10 @@ public class ScheduleService {
             }
         }
         return schedules;
+    }
+
+    public List<ScheduleDto> createScheduleDto(Long id, List<ScheduleDto> dtos) {
+        return createSchedules(id, dtos).stream().map(ScheduleService::buildDto).collect(Collectors.toList());
     }
 
     /**
@@ -106,7 +110,6 @@ public class ScheduleService {
      * @return измененный профиль
      */
     public List<Schedule> editSchedules(Long employeeId, List<ScheduleDto> newSchedules) {
-        List<Long> ids = newSchedules.stream().map(ScheduleDto::getId).collect(Collectors.toList());
         List<Schedule> schedules = scheduleRepository.findAllByEmployeeId(employeeId);
 
         List<Schedule> dtos = new ArrayList<>();

@@ -40,8 +40,8 @@ public class OrderController {
     @PostMapping("/orders")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "Создать заказ")
-    public void createOrder(@Parameter(description = "Данные заказа") @RequestBody @Valid OrderDto dto) {
-        orderService.createOrder(dto);
+    public OrderDto createOrder(@Parameter(description = "Данные заказа") @RequestBody @Valid OrderDto dto) {
+        return orderService.createOrder(dto);
     }
 
     @DeleteMapping("/orders/{id}")

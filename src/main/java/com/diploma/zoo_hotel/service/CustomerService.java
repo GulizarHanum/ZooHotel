@@ -28,7 +28,7 @@ public class CustomerService {
      *
      * @param dto объект с данными
      */
-    public void createCustomer(CustomerDto dto) {
+    public CustomerDto createCustomer(CustomerDto dto) {
         User user = userService.findUserById(dto.getUserId());
 
         Customer customer = new Customer();
@@ -40,7 +40,7 @@ public class CustomerService {
         customer.setBirthDate(dto.getBirthDate());
         customer.setUser(user);
 
-        customerRepository.save(customer);
+        return buildDto(customerRepository.save(customer));
     }
 
     /**

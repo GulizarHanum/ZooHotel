@@ -1,24 +1,22 @@
 package com.diploma.zoo_hotel.service;
 
 import com.diploma.zoo_hotel.dto.DetailsDto;
-import com.diploma.zoo_hotel.entities.Details;
-import com.diploma.zoo_hotel.entities.Employee;
-import com.diploma.zoo_hotel.entities.Pet;
-import com.diploma.zoo_hotel.entities.WeightEnum;
+import com.diploma.zoo_hotel.entities.*;
 import com.diploma.zoo_hotel.repository.DetailsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
+import java.util.List;
 import java.util.stream.Collectors;
-
-import static java.util.Objects.isNull;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class DetailsService {
     private final DetailsRepository detailsRepository;
-    private final PetService petService;
+    private final EmployeeService employeeService;
 
     /**
      * Создание деталей для профиля
@@ -26,26 +24,25 @@ public class DetailsService {
      * @param dto объект с данными
      */
     public Details createDetails(Long employeeId, DetailsDto dto) {
+        Employee employee = employeeService.getEmployeeById(employeeId);
         Details details = new Details();
-        details.setAcceptAnimals(dto.getAcceptAnimals());
         details.setChildren(dto.getChildren());
-        details.setEmployeeAnimals(dto.getEmployeeAnimals().get(0) != null
-                ? dto.getEmployeeAnimals().stream().map(petService::getPetById).collect(Collectors.toList())
-                : null);
-        details.setAcceptSize(dto.getAcceptSize().stream().map(WeightEnum::fromValue).collect(Collectors.toList()));
         details.setExperience(dto.getExperience());
-        details.setEmployeeId(employeeId);
+        details.setEmployee(employee);
         details.setHaveEquipment(dto.getHaveEquipment());
         details.setIsHouse(dto.getIsHouse());
-
+        setListField(dto, details);
         return detailsRepository.save(details);
+    }
+
+    public DetailsDto createDetailsDto(Long employeeId, DetailsDto dto) {
+        return buildDto(createDetails(employeeId, dto));
     }
 
     /**
      * Получение профиля по айди
      *
      * @param employeeId айди нужного нам профиля
-     *
      * @return возвращаем найденный профиль
      */
 
@@ -62,7 +59,6 @@ public class DetailsService {
      * Возвращает сущность Профиль
      *
      * @param employeeId айди профиля
-     *
      * @return сущность Профиль
      */
     public Details getDetailsByEmployee(Long employeeId) {
@@ -76,7 +72,7 @@ public class DetailsService {
     /**
      * Удалить профиль по его идентификатору
      *
-     * @param customerId айди записи
+     * @param employeeId айди записи
      */
     public void deleteDetails(Long employeeId) {
         if (employeeId == null) {
@@ -90,22 +86,22 @@ public class DetailsService {
      * Редактировать профиль
      *
      * @param newDetails профиль
-     *
      * @return измененный профиль
      */
     public Details editDetails(Long id, DetailsDto newDetails) {
+        Employee employee = employeeService.getEmployeeById(id);
+        if (employee == null) {
+            throw new IllegalArgumentException("Неверный идентификатор работника");
+        }
+
         Details detail = getDetailsByEmployee(newDetails.getId());
 
         detail.setIsHouse(newDetails.getIsHouse());
         detail.setExperience(newDetails.getExperience());
         detail.setChildren(newDetails.getChildren());
         detail.setHaveEquipment(newDetails.getHaveEquipment());
-        detail.setEmployeeId(id);
-        detail.setAcceptAnimals(newDetails.getAcceptAnimals());
-        detail.setEmployeeAnimals(newDetails.getEmployeeAnimals().get(0) != null
-               ? newDetails.getEmployeeAnimals().stream().map(petService::getPetById).collect(Collectors.toList())
-               : null);
-        detail.setAcceptSize(newDetails.getAcceptSize().stream().map(WeightEnum::fromValue).collect(Collectors.toList()));
+        detail.setEmployee(employee);
+        setListField(newDetails, detail);
 
         return detailsRepository.save(detail);
     }
@@ -118,20 +114,33 @@ public class DetailsService {
      * Превратить сущность в ДТО
      *
      * @param details сущность
-     *
      * @return ДТО с данными
      */
-    private static DetailsDto buildDto(Details details) {
+    public static DetailsDto buildDto(Details details) {
         return DetailsDto.builder()
                 .id(details.getId())
-                .acceptAnimals(details.getAcceptAnimals())
-                .acceptSize(details.getAcceptSize().stream().map(Enum::name).collect(Collectors.toList()))
+                .acceptAnimals(details.getAcceptAnimals() != null
+                        ? details.getAcceptAnimals().stream().map(AnimalType::name).collect(Collectors.toList())
+                        : List.of())
+                .acceptSize(details.getAcceptSize() != null
+                        ? details.getAcceptSize().stream().map(Enum::name).collect(Collectors.toList())
+                        : List.of())
                 .children(details.getChildren())
                 .isHouse(details.getIsHouse())
                 .haveEquipment(details.getHaveEquipment())
                 .haveVetEducation(details.getHaveVetEducation())
                 .experience(details.getExperience())
-                .employeeAnimals(details.getEmployeeAnimals().stream().map(Pet::getId).collect(Collectors.toList()))
+                .haveAnimals(details.getHaveAnimals())
                 .build();
+    }
+
+    private void setListField(DetailsDto dto, Details details) {
+        details.setHaveAnimals(dto.getHaveAnimals());
+        details.setAcceptSize(dto.getAcceptSize() != null
+                ? dto.getAcceptSize().stream().map(WeightEnum::fromValue).collect(Collectors.toList())
+                : List.of());
+        details.setAcceptAnimals(dto.getAcceptAnimals() != null
+                ? dto.getAcceptAnimals().stream().map(AnimalType::fromValue).collect(Collectors.toList())
+                : List.of());
     }
 }

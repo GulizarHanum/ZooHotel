@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 public class  Employee extends Person {
 
-    @OneToMany(mappedBy = "recipient", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipient", orphanRemoval = true)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<Feedback> feedbacks;
@@ -24,13 +24,11 @@ public class  Employee extends Person {
     @Column(name = "rating")
     private BigDecimal rating;
 
-//    @Column(name = "details")
-//    @Enumerated(EnumType.STRING)
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "details_id", nullable = false)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "details_id")
     private Details details;
 
-    @OneToMany(mappedBy = "sender", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sender", orphanRemoval = true)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<Schedule> schedule;

@@ -37,8 +37,8 @@ public class FeedbackController {
     @PostMapping("/feedbacks")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "Создать отзыв")
-    public void createFeedback(@Parameter(description = "Данные отзыва") @RequestBody @Valid FeedbackDto dto) {
-        feedbackService.createFeedback(dto);
+    public FeedbackDto createFeedback(@Parameter(description = "Данные отзыва") @RequestBody @Valid FeedbackDto dto) {
+        return feedbackService.createFeedback(dto);
     }
 
     @DeleteMapping("/feedbacks/{id}")

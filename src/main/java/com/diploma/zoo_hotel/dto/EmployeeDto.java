@@ -36,9 +36,6 @@ public class EmployeeDto {
     @Schema(description = "Дата рождения")
     private String description;
 
-    @Schema(description = "Опыт работы")
-    private Integer experience;
-
     @Schema(description = "Фото")
     private String photo;
 

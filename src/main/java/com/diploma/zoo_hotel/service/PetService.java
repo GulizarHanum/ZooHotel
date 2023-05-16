@@ -19,24 +19,25 @@ public class PetService {
 
     private final PetRepository petRepository;
     private final CustomerService customerService;
-//    private final EmployeeService employeeService;
 
     /**
      * Создание профиля
      *
      * @param dto объект с данными
      */
-    public void createPet(PetDto dto) {
+    public PetDto createPet(PetDto dto) {
         Customer customer = customerService.getCustomerById(dto.getOwnerId());
-//        Employee employee = employeeService.getEmployeeById(dto.getOwnerId());
         Pet pet = new Pet();
+        pet.setName(dto.getName());
         pet.setAnimalType(AnimalType.fromValue(dto.getAnimalType()));
         pet.setBirthDate(dto.getBirthDate());
         pet.setPhoto(UtilsService.convertPhotoToByte(dto.getPhoto()));
         pet.setCustomer(customer);
         pet.setDescription(dto.getDescription());
-//        pet.setEmployee(employee);
-        petRepository.save(pet);
+        pet.setHaveAllVaccinations(dto.getHaveAllVaccinations());
+        pet.setWeight(dto.getWeight());
+        pet.setIsFemale(dto.getIsFemale());
+        return buildDto(petRepository.save(pet));
     }
 
     /**
@@ -131,9 +132,7 @@ public class PetService {
                 .animalType(pet.getAnimalType().name())
                 .description(pet.getDescription())
                 .haveAllVaccinations(pet.getHaveAllVaccinations())
-                .ownerId(nonNull(pet.getCustomer())
-                        ? pet.getCustomer().getId()
-                        : pet.getEmployee().getId())
+                .ownerId(pet.getCustomer().getId())
                 .isFemale(pet.getIsFemale())
                 .weight(pet.getWeight())
                 .name(pet.getName())

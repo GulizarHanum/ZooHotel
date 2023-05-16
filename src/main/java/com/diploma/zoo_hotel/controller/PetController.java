@@ -24,8 +24,8 @@ public class PetController {
     @PostMapping("/pets")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "Создать питомца")
-    public void createPet(@Parameter(description = "Данные питомца") @RequestBody PetDto dto) {
-        petService.createPet(dto);
+    public PetDto createPet(@Parameter(description = "Данные питомца") @RequestBody PetDto dto) {
+        return petService.createPet(dto);
     }
 
     @PutMapping("/pets")
@@ -34,7 +34,7 @@ public class PetController {
         return petService.editPetDto(dto);
     }
 
-    @DeleteMapping(path = "pet/{id}")
+    @DeleteMapping(path = "pets/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(description = "Удалить питомца")
     public void deletePet(@Parameter(description = "Идентификатор питомца") @PathVariable Long id) {

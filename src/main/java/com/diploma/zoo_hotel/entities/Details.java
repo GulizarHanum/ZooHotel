@@ -20,8 +20,9 @@ public class Details {
     @Column(columnDefinition = "serial")
     private Long id;
 
-    @Column(name = "employeeId")
-    private Long employeeId;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
     @Column(name = "experience")
     private Integer experience;
@@ -29,8 +30,8 @@ public class Details {
     @ElementCollection
     @CollectionTable(name = "accept_sizes", joinColumns = @JoinColumn(name = "details_id"))
     @Column(name = "accept_size")
-    @Type(type = "org.hibernate.type.TextType")
     @EqualsAndHashCode.Exclude
+    @Enumerated(EnumType.STRING)
     @ToString.Exclude
     private List<WeightEnum> acceptSize;
 
@@ -43,17 +44,14 @@ public class Details {
     @Column(name = "have_equipment")
     private Boolean haveEquipment;
 
-    @Column(name = "accept_animals")
-    private String acceptAnimals;
-
-//    @OneToMany(mappedBy = "details", orphanRemoval = true)
     @ElementCollection
-    @CollectionTable(name = "employee_animals", joinColumns = @JoinColumn(name = "details_id"))
-    @Column(name = "pet_id")
-    @Type(type = "org.hibernate.type.TextType")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private List<Pet> employeeAnimals;
+    @CollectionTable(name="accept_animals", joinColumns = @JoinColumn(name = "details_id"))
+    @Column(name = "accept_animal")
+    @Enumerated(EnumType.STRING)
+    private List<AnimalType> acceptAnimals;
+
+    @Column(name = "have_animals")
+    private Boolean haveAnimals;
 
     @Column(name = "have_vet_education")
     private Boolean haveVetEducation;

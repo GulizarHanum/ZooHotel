@@ -19,27 +19,27 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @GetMapping(path = "/public/employees/{employeeId}/schedules")
-    @Operation(description = "Получить профиль по айди")
+    @Operation(description = "Получить расписание клиента по его айди")
     public List<ScheduleDto> getSchedules(@Parameter(description = "Идентификатор работника") @PathVariable Long employeeId) {
         return scheduleService.getScheduleDtosById(employeeId);
     }
 
     @PostMapping("/employees/{employeeId}/schedules")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(description = "Создать профиль")
-    public void createSchedules(@Parameter(description = "Идентификатор работника") @PathVariable Long employeeId, @Parameter(description = "Данные профиля") @RequestBody List<ScheduleDto> dtos) {
-        scheduleService.createSchedules(employeeId, dtos);
+    @Operation(description = "Создать расписание")
+    public List<ScheduleDto> createSchedules(@Parameter(description = "Идентификатор работника") @PathVariable Long employeeId, @Parameter(description = "Данные профиля") @RequestBody List<ScheduleDto> dtos) {
+        return scheduleService.createScheduleDto(employeeId, dtos);
     }
 
     @PutMapping("/employees/{employeeId}/schedules")
-    @Operation(description = "Редактировать профиль")
+    @Operation(description = "Редактировать расписание")
     public List<ScheduleDto> editSchedules(@Parameter(description = "Идентификатор работника") @PathVariable Long employeeId, @Parameter(description = "Данные профиля") @RequestBody List<ScheduleDto> dtos) {
         return scheduleService.editSchedulesDto(employeeId, dtos);
     }
 
     @DeleteMapping(path = "/employees/{employeeId}/schedules")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(description = "Удалить профиль")
+    @Operation(description = "Удалить расписание")
     public void deleteSchedules(@Parameter(description = "Идентификатор работника") @PathVariable Long employeeId, @Parameter(description = "Идентификатор профиля") @RequestParam List<Long> ids) {
         scheduleService.deleteSchedule(employeeId, ids);
     }

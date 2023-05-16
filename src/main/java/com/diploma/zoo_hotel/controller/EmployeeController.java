@@ -33,8 +33,8 @@ public class EmployeeController {
     @PostMapping("/employees")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "Создать профиль")
-    public void createEmployee(@Parameter(description = "Данные профиля") @RequestBody EmployeeDto dto) {
-        employeeService.createEmployee(dto);
+    public EmployeeDto createEmployee(@Parameter(description = "Данные профиля") @RequestBody EmployeeDto dto) {
+        return employeeService.createEmployee(dto);
     }
 
     @PutMapping("/employees")

@@ -14,9 +14,9 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends CrudRepository<Order, Long> {
 
-    @Query(value = "select * from order where seller_id = :sellerId", nativeQuery = true)
+    @Query(value = "select * from order_report where seller_id = :sellerId", nativeQuery = true)
     List<Order> findBySeller(@Param(value = "sellerId") Long id);
 
-    @Query(value = "select * from order where customer_id = :customerId", nativeQuery = true)
+    @Query(value = "select * from order_report where customer_id = :customerId", nativeQuery = true)
     List<Order> findByCustomer(@Param(value = "customerId") Long id);
 }

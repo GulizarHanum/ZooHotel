@@ -6,6 +6,7 @@ import com.diploma.zoo_hotel.entities.*;
 import com.diploma.zoo_hotel.repository.EmployeeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
@@ -20,20 +21,19 @@ import static java.util.Objects.nonNull;
 
 @Service
 @AllArgsConstructor
-//@Transactional
+@Transactional
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final UserService userService;
     private final CostServiceTypeService typeService;
-//    private final ScheduleService scheduleService;
-    private final DetailsService detailsService;
+//    private final DetailsService detailsService;
 
     /**
      * Создание профиля
      *
      * @param dto объект с данными
      */
-    public void createEmployee(EmployeeDto dto) {
+    public EmployeeDto createEmployee(EmployeeDto dto) {
         User user = userService.findUserById(dto.getUserId());
 
         Employee employee = new Employee();
@@ -46,13 +46,13 @@ public class EmployeeService {
         employee.setCreationDateTime(LocalDateTime.now());
         employee.setUser(user);
         employee.setDescription(dto.getDescription());
+//        employee.setDetails(new Details());
 
         Employee empl = employeeRepository.save(employee);
         empl.setCosts(typeService.createCostServiceType(empl.getId(), dto.getCosts()));
-//        empl.setSchedule(scheduleService.createSchedules(empl.getId(), dto.getSchedule()));
-        empl.setDetails(detailsService.createDetails(empl.getId(), dto.getDetails()));
+//        empl.setDetails(detailsService.createDetails(empl.getId(), dto.getDetails()));
 
-        employeeRepository.save(empl);
+        return buildDto(employeeRepository.save(empl));
     }
 
     /**
@@ -96,9 +96,6 @@ public class EmployeeService {
         }
 
         employeeRepository.deleteById(employeeId);
-        typeService.deleteCostServiceType(employeeId);
-//        scheduleService.deleteSchedule(employeeId, List.of());
-        detailsService.deleteDetails(employeeId);
     }
 
     /**
@@ -127,9 +124,8 @@ public class EmployeeService {
         employeeRecord.setFirstName(newEmployee.getFirstName());
         employeeRecord.setAddress(getAddress(newEmployee));
         employeeRecord.setPhoto(UtilsService.convertPhotoToByte(newEmployee.getPhoto()));
-        employeeRecord.setDetails(detailsService.editDetails(newEmployee.getId(), newEmployee.getDetails()));
+//        employeeRecord.setDetails(detailsService.editDetails(newEmployee.getId(), newEmployee.getDetails()));
         employeeRecord.setCosts(typeService.editCostServiceTypeDto(newEmployee.getId(), newEmployee.getCosts()));
-//        employeeRecord.setSchedule(scheduleService.editSchedules(newEmployee.getId(), newEmployee.getSchedule()));
 
         return buildDto(employeeRepository.save(employeeRecord));
     }
@@ -175,12 +171,12 @@ public class EmployeeService {
     }
 
     private boolean isAvailableCountPets(Employee item, Integer type) {
-        boolean doesNotPet = item.getDetails().getEmployeeAnimals().isEmpty();
+        boolean haveAnimals = item.getDetails().getHaveAnimals();
         switch (type) {
             case 1:
-                return !doesNotPet;
+                return !haveAnimals;
             case 2:
-                return doesNotPet;
+                return haveAnimals;
             default:
                 return true;
         }
@@ -197,22 +193,19 @@ public class EmployeeService {
     }
 
     private boolean isAvailableCost(List<CostServiceType> costs, ServiceType type, BigDecimal maxCost) {
-        return costs.stream().noneMatch(cost -> cost.getServiceType().equals(type) && cost.getCost().min(maxCost).equals(maxCost));
+        return costs.stream().noneMatch(cost -> cost.getServiceType() == type && cost.getCost().min(maxCost).equals(maxCost));
     }
 
     private boolean isFreeDays(List<Schedule> schedules, LocalDate startDate, LocalDate endDate) {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atStartOfDay();
-        List<LocalDateTime> notFreeDates = schedules.stream().map(schedule -> {
+        List<Boolean> notFreeDates = schedules.stream().map(schedule -> {
             LocalDateTime start = schedule.getStartDateTime();
             LocalDateTime end = schedule.getEndDateTime();
-            if ((start.isBefore(startDateTime) && end.isBefore(endDateTime))
-                    || (start.isAfter(startDateTime) && start.isAfter(endDateTime))) {
-                return null;
-            }
-            return start;
+            return (end.isBefore(startDateTime) && end.isBefore(endDateTime))
+                    || (start.isAfter(startDateTime) && start.isAfter(endDateTime));
         }).collect(Collectors.toList());
-        return notFreeDates.isEmpty();
+        return notFreeDates.contains(true);
     }
 
     /**
@@ -232,6 +225,8 @@ public class EmployeeService {
                 .photo(UtilsService.convertPhotoToString(employee.getPhoto()))
                 .rating(employee.getRating())
                 .userId(employee.getUser().getId())
+                .details(employee.getDetails() != null ? DetailsService.buildDto(employee.getDetails()) : null)
+                .costs(employee.getCosts().stream().map(CostServiceTypeService::buildDto).collect(Collectors.toList()))
                 .build();
     }
 

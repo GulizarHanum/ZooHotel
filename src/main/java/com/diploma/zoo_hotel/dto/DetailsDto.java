@@ -1,7 +1,5 @@
 package com.diploma.zoo_hotel.dto;
 
-import com.diploma.zoo_hotel.entities.Pet;
-import com.diploma.zoo_hotel.entities.WeightEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
@@ -34,10 +32,10 @@ public class DetailsDto {
     private Boolean haveEquipment;
 
     @Schema(description = "Допустимые животные")
-    private String acceptAnimals;
+    private List<String> acceptAnimals;
 
-    @Schema(description = "Животные работника")
-    private List<Long> employeeAnimals;
+    @Schema(description = "Наличие питомцев")
+    private Boolean haveAnimals;
 
     @Schema(description = "Наличие вет образования")
     private Boolean haveVetEducation;

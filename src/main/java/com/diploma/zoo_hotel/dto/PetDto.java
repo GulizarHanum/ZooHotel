@@ -20,8 +20,6 @@ public class PetDto {
 
     private Long ownerId;
 
-//    private Long detailsId;
-
     private String name;
 
     private String animalType;
